@@ -1,0 +1,77 @@
+<div class="center-content" *ngIf="currentPart === Part.Explanation">
+  <h1>משואה בנעלם אחד רמה בינונית</h1>
+  <h1>צפה בסרטון כיצד לפתור משואה בנעלם אחד</h1>
+  <iframe width="560" height="315" src="https://www.youtube.com/link-to-video" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+  
+</div>
+
+<div *ngIf="currentPart === Part.Quiz">
+  <div *ngIf="!showSummary">
+    <h1>משואה {{ attempts + 1 }}: פתור אתהמשואה</h1>
+    <div>{{ equation }}</div>
+    <label for="userSolution">הכנס את הפתרון</label>
+    <input type="number" id="userSolution" [(ngModel)]="userSolution" />
+    <button (click)="checkSolution()" *ngIf="!isAnswerChecked">בדוק את הפתרון</button>
+    <button *ngIf="isAnswerChecked && attempts < maxAttempts - 1" (click)="nextQuestion()">Next Question</button>
+    <button (click)="changePart(Part.Explanation)">בחזרה להסבר</button>
+    <div *ngIf="isAnswerChecked">
+      <p *ngIf="isAnswerCorrect">ענית נכון כל הכבוד</p>
+      <p *ngIf="!isAnswerCorrect">תשובתך לא נכונה התשובה הנכונההיא: {{ correctSolution }}.</p>
+    </div>
+  </div>
+  <div *ngIf="showSummary">
+    <h1>סיכום מבדק</h1>
+    <p>ענית נכון{{ correctAnswers }}מתוך 6 שאלות</p>
+    <button (click)="resetQuiz()">נסה שנית</button>
+  </div>
+</div>
+
+<div *ngIf="currentPart === Part.QuizCompleted">
+  <h1>סיכום מבדק</h1>
+  <p>ענית נכון {{ correctAnswers }}מתוך 6 שאלות</p>
+  <button (click)="changePart(Part.Quiz)">Try Again</button>
+  <button (click)="startTest()">התחל מבחן</button>
+</div>
+
+<div *ngIf="currentPart === Part.Test">
+  <h1>מבחן</h1>
+  <div *ngFor="let question of testQuestions; let i = index">
+    <p>שאלה {{ i + 1 }}</p>
+    <div>{{ question.equation }}</div>
+    <label for="userTestAnswer{{ i }}">הכנס את תשובתך</label>
+    <input type="number" id="userTestAnswer{{ i }}" [(ngModel)]="userTestAnswers[i]" />
+  </div>
+  <button (click)="checkTestAnswers()">הגש מבחן</button>
+  <div *ngIf="showTestSummary">
+    <h1>סיכום מבחן</h1>
+    <p>ענית נכון{{ testCorrectAnswers }} מתוך {{ testQuestions.length }}שאלות</p>
+    <button (click)="changePart(Part.Explanation)">Back to Explanation</button>
+  </div>
+</div>
+<div class="menu-container">
+  <button (click)="changePart(Part.Quiz)">התחל במבדק</button>
+  <button (click)="changePart(Part.Explanation)">חזור להסבר</button>
+  <button (click)="navigateToTopics()">חזור לרשימת הנושאים</button>
+  <button (click)="fetchUserExercises()">התרגילים שלי</button>
+  <button (click)="startTest()">התחל במבחן</button>
+  <button (click)="fetchUserExercises()">My exercises</button>
+  <button (click)="navigateToTopics()">Back to Topics</button>
+
+
+   
+
+</div>
+
+
+<div *ngIf="showExercises">
+  <h2>התרגילים שלי</h2>
+  <ul *ngIf="savedEquations.length > 0">
+    <li *ngFor="let exercise of savedEquations">
+      <p>משואה {{ exercise.equation }}</p>
+    </li>
+  </ul>
+
+  <div *ngIf="savedEquations.length === 0">
+    <h2>לא נמצאו תרגילים</h2>
+  </div>
+</div>
